@@ -1,0 +1,1 @@
+clang++ main.cpp MatrixMultiplier.cpp VulkanUtils.cpp InputBuffer.cpp OutputBuffer.cpp -O3 -std=c++17 -lvulkan && ./a.ou
