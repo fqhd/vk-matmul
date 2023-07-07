@@ -1,6 +1,7 @@
 #include "OutputBuffer.hpp"
 #include <iostream>
 #include "VulkanUtils.hpp"
+#include <cstring>
 
 void OutputBuffer::Create(VkPhysicalDevice physicalDevice, VkDevice device, VkDeviceSize size)
 {

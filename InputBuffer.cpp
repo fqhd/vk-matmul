@@ -1,7 +1,7 @@
 #include "InputBuffer.hpp"
 #include <iostream>
 #include "VulkanUtils.hpp"
-
+#include <cstring>
 
 void InputBuffer::Create(VkPhysicalDevice physicalDevice, VkDevice device, VkDeviceSize size)
 {
