@@ -288,15 +288,11 @@ void MatrixMultiplier::FindPhysicalDevice() {
     if (deviceCount == 0) {
         std::cout << "Could not find a device with vulkan support" << std::endl;
     }
+    std::cout << "Found " << deviceCount << " devices" << std::endl;
 
     std::vector<VkPhysicalDevice> devices(deviceCount);
     vkEnumeratePhysicalDevices(instance, &deviceCount, devices.data());
-    for (VkPhysicalDevice device : devices) {
-        if (true) {
-            physicalDevice = device;
-            break;
-        }
-    }
+    physicalDevice = devices[0];
 }
 
 uint32_t MatrixMultiplier::GetComputeQueueFamilyIndex() {
