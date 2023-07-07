@@ -253,6 +253,8 @@ void MatrixMultiplier::CreateInstance() {
             break;
         }
     }
+
+    std::cout << "Validation layers enabled" << std::endl;
 #endif
 
     VkApplicationInfo applicationInfo = {};
