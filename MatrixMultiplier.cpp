@@ -1,6 +1,7 @@
 #include "MatrixMultiplier.hpp"
 #include <iostream>
 #include <cmath>
+#include <optional>
 
 const int MAX_FRAMES_IN_FLIGHT = 2;
 
@@ -237,6 +238,42 @@ void MatrixMultiplier::ReadData(float* data) {
     outputBuffer.ReadData(commandPool, queue, data);
 }
 
+struct QueueFamilyIndices {
+    std::optional<uint32_t> graphicsFamily;
+
+    bool isComplete() {
+        return graphicsFamily.has_value();
+    }
+};
+
+QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device) {
+    QueueFamilyIndices indices;
+    uint32_t queueFamilyCount = 0;
+    vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, nullptr);
+
+    std::vector<VkQueueFamilyProperties> queueFamilies(queueFamilyCount);
+    vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, queueFamilies.data());
+    
+    int i = 0;
+    for (const auto& queueFamily : queueFamilies) {
+        if (queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT) {
+            indices.graphicsFamily = i;
+        }
+        if (indices.isComplete()) {
+            break;
+        }
+        i++;
+    }
+    
+    return indices;
+}
+
+bool isDeviceSuitable(VkPhysicalDevice device) {
+    QueueFamilyIndices indices = findQueueFamilies(device);
+
+    return indices.isComplete();
+}
+
 void MatrixMultiplier::CreateInstance() {
     std::vector<const char*> enabledLayers;
 
@@ -292,7 +329,17 @@ void MatrixMultiplier::FindPhysicalDevice() {
 
     std::vector<VkPhysicalDevice> devices(deviceCount);
     vkEnumeratePhysicalDevices(instance, &deviceCount, devices.data());
-    physicalDevice = devices[0];
+
+    for (const auto& device : devices) {
+        if (isDeviceSuitable(device)) {
+            physicalDevice = device;
+            break;
+        }
+    }
+
+    if (physicalDevice == VK_NULL_HANDLE) {
+        std::cout << "Failed to find a suitable vulkan device" << std::endl;
+    }
 }
 
 uint32_t MatrixMultiplier::GetComputeQueueFamilyIndex() {
